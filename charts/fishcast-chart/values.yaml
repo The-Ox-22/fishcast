@@ -1,0 +1,44 @@
+replicaCount: 1
+
+image:
+  repository: fishcast
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# Matches the repo-wide "regcred" docker-registry secret convention (see
+# gas-tracker-chart). Note it's namespace-scoped -- a copy needs to exist
+# in whichever namespace this chart is deployed into.
+imagePullSecrets:
+  - name: regcred
+
+# ClusterIP only -- this service is internal to the cluster, no ingress.
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+livenessProbe:
+  path: /healthz
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+readinessProbe:
+  path: /healthz
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 32Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+nameOverride: ""
+# Chart.yaml's name is "fishcast-chart" (kept distinct from the "fishcast"
+# Docker image so they don't collide when both get pushed to the same OCI
+# registry namespace) -- pin the k8s resource name back to the clean
+# "fishcast" regardless, since that distinction shouldn't leak into
+# Service/Deployment names.
+fullnameOverride: "fishcast"

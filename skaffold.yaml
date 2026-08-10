@@ -1,0 +1,40 @@
+apiVersion: skaffold/v4beta14
+kind: Config
+metadata:
+  name: fishcast
+
+build:
+  artifacts:
+    - image: fishcast
+      docker:
+        dockerfile: Dockerfile
+
+manifests:
+  helm:
+    releases:
+      - name: fishcast
+        chartPath: charts/fishcast-chart
+        namespace: fishcast
+        createNamespace: true
+        setValueTemplates:
+          image.repository: "{{.IMAGE_REPO_fishcast}}"
+          image.tag: "{{.IMAGE_TAG_fishcast}}"
+
+deploy:
+  kubectl: {}
+
+portForward:
+  - resourceType: service
+    resourceName: fishcast
+    namespace: fishcast
+    port: 80
+    localPort: 8080
+
+profiles:
+  - name: release
+    build:
+      tagPolicy:
+        envTemplate:
+          template: "v0.1.0"
+      local:
+        push: true

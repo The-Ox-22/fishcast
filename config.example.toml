@@ -1,0 +1,2 @@
+# Copy to config.toml. No settings required yet -- this fills in as
+# fishcast grows (API keys, etc). See src/config.rs.

@@ -1,0 +1,7 @@
+fishcast is deployed as a ClusterIP service, internal to the cluster only.
+
+From another pod in the same namespace, reach it at:
+  http://{{ include "fishcast.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}
+
+Check pod health:
+  kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}

@@ -1,0 +1,11 @@
+[package]
+name = "fishcast"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "signal"] }
+serde = { version = "1", features = ["derive"] }
+anyhow = "1"
+figment = { version = "0.10", features = ["toml", "env"] }
+axum = "0.8"
