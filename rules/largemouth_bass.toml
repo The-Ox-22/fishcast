@@ -1,0 +1,290 @@
+# Largemouth bass bait/technique rules for fishcast.
+#
+# Each rule fires when every tag in `requires` is present in the resolved
+# tag set - it does NOT need to cover every possible condition, only the
+# ones it actually cares about. Several narrow rules can fire on the same
+# request and get merged/ranked by weight; see docs/design.md SS2 and
+# src/rules.rs for the matching/merge algorithm. Content translated from
+# docs/research.md SS1.
+
+[[rule]]
+id = "winter_slow_presentation"
+requires = ["season:winter"]
+weight = 7
+baits = [
+  { category = "jig", variant = "finesse", colors = ["black_blue", "brown"] },
+  { category = "drop_shot", colors = ["green_pumpkin", "smoke"] },
+]
+retrieve = "very slow - drag and long pauses"
+target_structure = ["creek/river channel bends", "deep bluffs and drop-offs"]
+why = "Cold water slows bass metabolism dramatically - a fast presentation won't get bit."
+
+[[rule]]
+id = "pre_spawn_aggressive_feeding"
+requires = ["season:pre_spawn"]
+weight = 7
+baits = [
+  { category = "lipless_crankbait", colors = ["red", "chrome_blue"] },
+  { category = "jerkbait", colors = ["clown", "ghost_shad"] },
+]
+retrieve = "medium-fast with occasional rips and pauses"
+target_structure = ["secondary points near spawning bays", "creek channel mouths"]
+why = "Pre-spawn bass stage and feed aggressively to build reserves before bedding."
+
+[[rule]]
+id = "spawn_bed_sight_fishing"
+requires = ["season:spawn"]
+weight = 7
+baits = [
+  { category = "creature_bait", rig = "texas", colors = ["watermelon_red", "black_blue"] },
+  { category = "soft_plastic_worm", rig = "wacky", colors = ["green_pumpkin"] },
+]
+retrieve = "drop into the bed, let it sit, subtle twitches"
+target_structure = ["shallow spawning flats and pockets", "protected bedding areas"]
+why = "Spawning bass guard beds rather than actively feed - subtle, aggravating presentations trigger reaction strikes, not feeding strikes."
+
+[[rule]]
+id = "post_spawn_shad_spawn_topwater"
+requires = ["season:post_spawn"]
+weight = 6
+baits = [
+  { category = "topwater_walker", colors = ["bone", "shad"] },
+  { category = "jig", variant = "swim", colors = ["white", "shad"] },
+]
+retrieve = "steady walk-the-dog / swim through cover"
+target_structure = ["shallow flats near spawning bays", "shad-spawn areas at dawn"]
+why = "Post-spawn bass recover and key on shad-spawn activity in shallow water."
+
+[[rule]]
+id = "summer_offshore_structure"
+requires = ["season:summer", "light:bright"]
+weight = 8
+baits = [
+  { category = "deep_crankbait", colors = ["chartreuse_black", "sexy_shad"] },
+  { category = "jig", variant = "football", colors = ["green_pumpkin", "brown_orange"] },
+]
+retrieve = "slow drag / grind through bottom contact"
+target_structure = ["offshore humps and ledges", "deep creek channel bends"]
+why = "Bright summer sun pushes bass off the bank to deeper, cooler offshore structure."
+
+[[rule]]
+id = "summer_low_light_shallow_window"
+requires = ["season:summer", "light:low"]
+weight = 8
+baits = [
+  { category = "buzzbait", colors = ["black", "white"] },
+  { category = "topwater_popper", colors = ["bone", "bluegill"] },
+]
+retrieve = "steady burn / walk-the-dog"
+target_structure = ["shallow flats", "grass edges near deep water"]
+why = "Dawn/dusk low light gives bass a brief shallow, aggressive feeding window even in summer heat."
+
+[[rule]]
+id = "fall_shad_chase_reaction"
+requires = ["season:fall"]
+weight = 7
+baits = [
+  { category = "squarebill_crankbait", colors = ["shad", "chartreuse_brown"] },
+  { category = "spinnerbait", colors = ["white", "chartreuse_white"] },
+]
+retrieve = "steady, moderate-to-fast"
+target_structure = ["creek mouths", "bank cover near visible baitfish schools"]
+why = "Fall bass key aggressively on migrating shad - moving baits that imitate baitfish outperform slow presentations."
+
+[[rule]]
+id = "low_light_general_reaction"
+requires = ["light:low"]
+weight = 5
+baits = [{ category = "spinnerbait", colors = ["white", "black_blue"] }]
+retrieve = "steady, moderate speed"
+target_structure = ["shallow banks", "points"]
+why = "Low light lets bass move shallow and feed aggressively regardless of season."
+
+[[rule]]
+id = "post_frontal_bluebird_finesse"
+requires = ["light:bright", "pressure_trend:rising"]
+weight = 9
+baits = [
+  { category = "soft_plastic_worm", rig = "shaky_head", colors = ["green_pumpkin", "watermelon"] },
+  { category = "jig", variant = "football", colors = ["brown_orange"] },
+]
+retrieve = "slow, deadstick pauses"
+target_structure = ["deeper cover fish pulled to after the front", "shaded docks"]
+why = "Bright bluebird skies after a pressure rise is the classic tough post-frontal bite - fish tuck tight and quit chasing."
+
+[[rule]]
+id = "pre_frontal_falling_pressure_frenzy"
+requires = ["pressure_trend:falling"]
+weight = 8
+baits = [
+  { category = "chatterbait", colors = ["white", "chartreuse_white"] },
+  { category = "lipless_crankbait", colors = ["red", "chrome"] },
+]
+retrieve = "fast, aggressive"
+target_structure = ["main lake points", "open flats"]
+why = "Falling barometric pressure ahead of a front triggers a well-documented feeding frenzy - fish feed aggressively while they can."
+
+[[rule]]
+id = "cold_front_recent_tough_bite"
+requires = ["temp_trend:cold_front_recent"]
+weight = 9
+baits = [
+  { category = "drop_shot", colors = ["green_pumpkin", "smoke"] },
+  { category = "soft_plastic_worm", rig = "shaky_head", colors = ["watermelon"] },
+]
+retrieve = "dead slow, minimal movement"
+target_structure = ["deep, stable-temperature water", "thick shaded cover"]
+why = "A recent sharp cold-water drop hasn't given fish time to re-acclimate - metabolism and feeding activity are both suppressed."
+
+[[rule]]
+id = "recovering_from_front_improving_bite"
+requires = ["temp_trend:recovering_from_front"]
+weight = 6
+baits = [
+  { category = "jerkbait", colors = ["ghost_shad", "clown"] },
+  { category = "jig", variant = "swim", colors = ["shad"] },
+]
+retrieve = "moderate with pauses, working slightly shallower each day"
+target_structure = ["transition zones between deep refuge and shallow feeding flats"]
+why = "As water temperature climbs back toward normal after a cold snap, fish begin moving shallower and feeding more actively again."
+
+[[rule]]
+id = "warming_pre_spawn_push"
+requires = ["temp_trend:warming", "season:pre_spawn"]
+weight = 9
+baits = [{ category = "lipless_crankbait", colors = ["red", "craw"] }]
+retrieve = "fast, aggressive with occasional rips"
+target_structure = ["shallow flats warming fastest in the afternoon sun", "secondary points"]
+why = "A warming trend during pre-spawn accelerates the push toward spawning bays - fish feed hard while migrating shallow."
+
+[[rule]]
+id = "stained_water_reaction"
+requires = ["clarity:stained"]
+weight = 6
+baits = [
+  { category = "chatterbait", colors = ["chartreuse_white"] },
+  { category = "spinnerbait", colors = ["chartreuse_white", "black_blue"] },
+]
+retrieve = "steady, moderate speed"
+target_structure = ["wind-blown banks", "creek arms with visible current"]
+why = "Stained water limits visibility - bright, vibrating baits give fish something to key on by sight and feel."
+
+[[rule]]
+id = "muddy_water_vibration"
+requires = ["clarity:muddy"]
+weight = 6
+baits = [
+  { category = "chatterbait", colors = ["black_blue"] },
+  { category = "lipless_crankbait", colors = ["chartreuse_black"] },
+]
+retrieve = "slow-rolled, kept close to cover"
+target_structure = ["shallow cover tight to the bank", "laydowns"]
+why = "In muddy water bass hunt by vibration and silhouette, not sight - dark, bulky, loud baits out-fish natural colors."
+
+[[rule]]
+id = "clear_water_finesse"
+requires = ["clarity:clear"]
+weight = 5
+baits = [
+  { category = "soft_plastic_worm", rig = "ned", colors = ["green_pumpkin", "watermelon"] },
+  { category = "drop_shot", colors = ["natural_shad"] },
+]
+retrieve = "slow, subtle"
+target_structure = ["deeper breaks", "main lake points"]
+why = "Clear water lets fish get a good look - natural colors and finesse presentations out-fish bulky, bright baits."
+
+[[rule]]
+id = "windy_reaction_bite"
+requires = ["wind:moderate"]
+weight = 6
+baits = [
+  { category = "spinnerbait", colors = ["white", "chartreuse_white"] },
+  { category = "squarebill_crankbait", colors = ["craw", "shad"] },
+]
+retrieve = "steady, bump cover on contact"
+target_structure = ["wind-blown points", "wind-blown banks"]
+why = "Wind pushes baitfish and warm surface water onto the bank and breaks up light penetration, making fish more comfortable feeding aggressively shallow."
+
+[[rule]]
+id = "calm_bright_toughest_bite"
+requires = ["wind:calm", "light:bright"]
+weight = 8
+baits = [
+  { category = "soft_plastic_worm", rig = "ned", colors = ["green_pumpkin"] },
+  { category = "creature_bait", rig = "texas", colors = ["watermelon_red"] },
+]
+retrieve = "dead slow, let it sit"
+target_structure = ["shaded docks", "deep vegetation edges"]
+why = "Dead calm plus bright sun is one of the toughest common combos - no wind to disturb the surface and no low light to embolden fish, so finesse is often the only thing that draws a bite."
+
+[[rule]]
+id = "river_current_break"
+requires = ["water_body:river"]
+weight = 6
+baits = [
+  { category = "squarebill_crankbait", colors = ["craw", "shad"] },
+  { category = "jig", variant = "flipping", colors = ["black_blue", "brown"] },
+]
+retrieve = "cast upstream, work with the current"
+target_structure = ["current seams", "eddies behind laydowns and rock", "bridge pilings"]
+why = "In rivers, current - not open water - dictates where bass hold; target breaks in the flow rather than blind casting."
+
+[[rule]]
+id = "reservoir_offshore_structure"
+requires = ["water_body:reservoir"]
+weight = 5
+baits = [
+  { category = "jig", variant = "football", colors = ["green_pumpkin", "brown_orange"] },
+  { category = "deep_crankbait", colors = ["chartreuse_black"] },
+]
+retrieve = "slow drag / grind bottom contact"
+target_structure = ["flooded timber", "standing brush", "creek channel ledges", "riprap dams"]
+why = "Reservoirs are typically the most structure-rich water body type - flooded cover and channel ledges hold fish predictably."
+
+[[rule]]
+id = "pond_bank_cover"
+requires = ["water_body:pond"]
+weight = 5
+baits = [
+  { category = "soft_plastic_worm", rig = "texas", colors = ["green_pumpkin", "junebug"] },
+  { category = "spinnerbait", colors = ["white"] },
+]
+retrieve = "work tight to any visible cover"
+target_structure = ["docks", "laydowns", "the single available brushpile"]
+why = "Small ponds have limited structure diversity - fish relate heavily to whatever cover exists, so precision beats blind casting."
+
+[[rule]]
+id = "natural_lake_vegetation_edge"
+requires = ["water_body:natural_lake"]
+weight = 5
+baits = [
+  { category = "spinnerbait", colors = ["white", "chartreuse_white"] },
+  { category = "frog", colors = ["black", "white"] },
+]
+retrieve = "parallel the weed edge"
+target_structure = ["outside weed line edge", "points", "humps"]
+why = "Natural lakes often lack the depth variety of reservoirs - the vegetation edge is frequently the single best pattern."
+
+[[rule]]
+id = "solunar_major_topwater_window"
+requires = ["solunar:major"]
+weight = 6
+baits = [
+  { category = "topwater_walker", colors = ["bone", "black"] },
+  { category = "buzzbait", colors = ["white", "black"] },
+]
+retrieve = "aggressive, steady cadence"
+target_structure = ["shallow flats", "points"]
+why = "Major solunar feeding windows correlate with a short burst of heightened activity - aggressive, moving baits capitalize on it."
+
+[[rule]]
+id = "reservoir_rising_water_flooded_cover"
+requires = ["water_body:reservoir", "water_level_trend:rising"]
+weight = 8
+baits = [
+  { category = "spinnerbait", colors = ["white", "chartreuse_white"] },
+  { category = "squarebill_crankbait", colors = ["craw"] },
+]
+retrieve = "cast into newly flooded cover"
+target_structure = ["freshly flooded brush and grass right at the new waterline"]
+why = "Rising water on a reservoir pushes fish into newly flooded cover to feed - a reliable, well-documented reservoir pattern."

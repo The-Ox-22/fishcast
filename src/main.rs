@@ -1,5 +1,14 @@
 mod config;
+mod conditions;
+mod location;
+mod report;
+mod rules;
 mod server;
+mod solunar;
+mod species;
+mod tags;
+mod water;
+mod weather;
 
 use config::Config;
 
@@ -14,12 +23,12 @@ async fn main() {
 }
 
 async fn run() -> anyhow::Result<()> {
-    let _config = Config::load()?;
+    let config = Config::load()?;
 
     let port: u16 = std::env::var("PORT")
         .ok()
         .and_then(|p| p.parse().ok())
         .unwrap_or(8080);
 
-    server::run(port).await
+    server::run(port, config).await
 }

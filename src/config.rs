@@ -4,10 +4,24 @@ use figment::{
 };
 use serde::Deserialize;
 
-// Empty for now - fields land here once fishcast has something to configure
-// (API keys, etc). Wiring is in place so that's a one-line addition later.
 #[derive(Debug, Deserialize)]
-pub struct Config {}
+pub struct Config {
+    /// How far from the caller's location a USGS water gauge is still
+    /// trusted as representative. See docs/design.md SS4.3.
+    #[serde(default = "default_usgs_gauge_radius_mi")]
+    pub usgs_gauge_radius_mi: f64,
+    /// How many top-ranked rules contribute to a /suggest response.
+    #[serde(default = "default_rule_top_n")]
+    pub rule_top_n: usize,
+}
+
+fn default_usgs_gauge_radius_mi() -> f64 {
+    25.0
+}
+
+fn default_rule_top_n() -> usize {
+    4
+}
 
 impl Config {
     pub fn load() -> anyhow::Result<Self> {
