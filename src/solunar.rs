@@ -24,6 +24,10 @@ pub struct SunMoonSnapshot {
     pub sunrise: DateTime<Utc>,
     pub sunset: DateTime<Utc>,
     pub solunar_period: SolunarPeriod,
+    /// Today's computed major/minor windows - exposed (not just the "now"
+    /// period above) so the 48h outlook can approximate day+1's windows by
+    /// shifting these +24h. See src/outlook.rs.
+    pub windows: Vec<SolunarWindow>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -80,7 +84,7 @@ fn build_snapshot(r: ApiResults, at: DateTime<Utc>) -> anyhow::Result<SunMoonSna
     let windows = knights_solunar_windows(moonrise, moonset);
     let solunar_period = current_solunar_period(&windows, at);
 
-    Ok(SunMoonSnapshot { sunrise, sunset, solunar_period })
+    Ok(SunMoonSnapshot { sunrise, sunset, solunar_period, windows })
 }
 
 fn parse_clock_time(s: &str) -> anyhow::Result<NaiveTime> {
@@ -101,6 +105,7 @@ fn parse_relative_to(date: NaiveDate, sunrise_time: NaiveTime, s: &str) -> anyho
     Ok(dt)
 }
 
+#[derive(Debug, Clone, Copy)]
 pub struct SolunarWindow {
     pub kind: SolunarPeriod,
     pub center: DateTime<Utc>,

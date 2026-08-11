@@ -1,6 +1,7 @@
 use chrono::{DateTime, Datelike, Duration, NaiveDate, Utc};
 use serde::{Deserialize, Serialize};
 
+use crate::outlook::{self, FishingOutlook};
 use crate::species::SpeciesProfile;
 use crate::{solunar, water, weather};
 
@@ -194,7 +195,7 @@ pub async fn resolve(
     species: &SpeciesProfile,
     gauge_radius_mi: f64,
     overrides: &ConditionOverrides,
-) -> ResolvedConditions {
+) -> (ResolvedConditions, FishingOutlook) {
     let now = Utc::now();
 
     let (weather_result, water_result, solunar_result) = tokio::join!(
@@ -277,7 +278,22 @@ pub async fn resolve(
     c.water_body_type = overrides.water_body_type.map(|v| Resolved::new(v, Source::Provided));
     c.cover = overrides.cover.clone().map(|v| Resolved::new(v, Source::Provided));
 
-    c
+    let quality_now = outlook::quality_now(&c);
+    let next_48h = match (&weather, &sun_moon) {
+        (Some(w), Some(s)) => outlook::outlook_48h(
+            &w.forecast_hourly,
+            Some(w.pressure_mb),
+            s.sunrise,
+            s.sunset,
+            &s.windows,
+            c.season_phase.as_ref().map(|r| r.value),
+            now,
+        ),
+        _ => Vec::new(),
+    };
+    let fishing_outlook = FishingOutlook { now: quality_now, next_48h };
+
+    (c, fishing_outlook)
 }
 
 /// Dawn/dusk windows are 45min before to 30min after sunrise, and 30min
@@ -645,13 +661,16 @@ mod tests {
             ..Default::default()
         };
 
-        let c = resolve(&client, 36.13, -97.07, profile, 25.0, &overrides).await;
+        let (c, outlook) = resolve(&client, 36.13, -97.07, profile, 25.0, &overrides).await;
 
         // Live-fetched fields should show up as Fetched or Derived, never absent
         // for a well-covered CONUS location.
         assert!(c.air_temp_f.is_some(), "expected air_temp_f from weather");
         assert!(c.pressure_trend.is_some(), "expected a derived pressure_trend");
         assert!(c.solunar_period.is_some(), "expected a derived solunar_period");
+
+        assert!(outlook.now.is_some(), "expected a fishing quality read for now");
+        assert!(!outlook.next_48h.is_empty(), "expected 48h outlook windows");
 
         // Overrides win and are tagged Provided.
         let clarity = c.water_clarity.expect("water_clarity should be set from override");

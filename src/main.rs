@@ -1,6 +1,7 @@
 mod config;
 mod conditions;
 mod location;
+mod outlook;
 mod report;
 mod rules;
 mod server;

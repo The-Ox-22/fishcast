@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::conditions::{self, ConditionOverrides, ResolvedConditions, SeasonPhase};
 use crate::location::{self, LocationInput, ResolvedLocation};
+use crate::outlook::FishingOutlook;
 use crate::rules::{RuleEngine, StructureSuggestion, Suggestion};
 use crate::{species, tags};
 
@@ -36,6 +37,9 @@ pub struct SuggestResponse {
     pub season_phase: Option<SeasonPhase>,
     pub suggestions: Vec<Suggestion>,
     pub target_structure: Vec<StructureSuggestion>,
+    /// General conditions favorability, independent of bait choice - see
+    /// src/outlook.rs.
+    pub fishing_outlook: FishingOutlook,
 }
 
 #[derive(Debug)]
@@ -71,7 +75,7 @@ pub async fn suggest(
         .await
         .map_err(ReportError::LocationResolution)?;
 
-    let resolved_conditions = conditions::resolve(
+    let (resolved_conditions, fishing_outlook) = conditions::resolve(
         client,
         resolved_location.lat,
         resolved_location.lon,
@@ -91,5 +95,6 @@ pub async fn suggest(
         season_phase,
         suggestions,
         target_structure,
+        fishing_outlook,
     })
 }

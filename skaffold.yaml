@@ -21,7 +21,13 @@ manifests:
           image.tag: "{{.IMAGE_TAG_fishcast}}"
 
 deploy:
-  kubectl: {}
+  kubectl:
+    # The Helm chart's rendered manifests don't carry an explicit
+    # metadata.namespace (that's set via `helm install --namespace`
+    # normally, which this kubectl-apply-based deploy path doesn't do) -
+    # without this, `kubectl apply` falls back to the current context's
+    # default namespace instead of "fishcast".
+    defaultNamespace: fishcast
 
 portForward:
   - resourceType: service
@@ -35,6 +41,6 @@ profiles:
     build:
       tagPolicy:
         envTemplate:
-          template: "v0.1.0"
+          template: "v0.2.0"
       local:
         push: true
